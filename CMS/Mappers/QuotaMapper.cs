@@ -9,12 +9,11 @@ namespace CommunalManagementSystem.API.Mappers
         {
             return new QuotaDTO
             {
-                id = quota.Id,
+                _id = quota.Id,
                 person_id = quota.PersonId,
                 year = quota.Year,
                 month = quota.Month,
                 amount = quota.Amount,
-                status = quota.Status,
                 created_at = quota.CreatedAt
             };
         }
@@ -23,12 +22,11 @@ namespace CommunalManagementSystem.API.Mappers
         {
             return new Quota
             {
-                Id = quotaDTO.id,
+                Id = quotaDTO._id,
                 PersonId = quotaDTO.person_id,
                 Year = quotaDTO.year,
                 Month = quotaDTO.month,
                 Amount = quotaDTO.amount,
-                Status = quotaDTO.status,
                 CreatedAt = quotaDTO.created_at
             };
         }

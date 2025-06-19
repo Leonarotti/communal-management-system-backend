@@ -43,6 +43,23 @@ namespace CommunalManagementSystem.DataAccess.Actions
             return quotas.Select(q => QuotaDAOToQuota(q));
         }
 
+        public async Task<IEnumerable<Quota>> GetByDateAsync(int year, int month)
+        {
+            var quotas = await _context.Quotas
+                .Where(q => q.year == year && q.month == month)
+                .ToListAsync();
+
+            return quotas.Select(q => new Quota
+            {
+                Id = q.id,
+                PersonId = q.person_id,
+                Year = q.year,
+                Month = q.month,
+                Amount = q.amount,
+                CreatedAt = q.created_at
+            });
+        }
+
         public async Task<Quota?> GetByPeriodAsync(Guid personId, int year, int month)
         {
             var quota = await _context.Quotas
@@ -62,14 +79,17 @@ namespace CommunalManagementSystem.DataAccess.Actions
             return dao.id;
         }
 
-        public async Task<bool> UpdateStatusAsync(Guid id, string newStatus)
+        public async Task<bool> UpdateAsync(Guid id, Quota updatedQuota)
         {
-            var quota = await _context.Quotas.FindAsync(id);
-            if (quota == null)
-                return false;
+            var existing = await _context.Quotas.FindAsync(id);
+            if (existing is null) return false;
 
-            quota.status = newStatus;
-            _context.Quotas.Update(quota);
+            existing.year = updatedQuota.Year;
+            existing.month = updatedQuota.Month;
+            existing.amount = updatedQuota.Amount;
+            // No actualizamos created_at para mantener la integridad de creación
+
+            _context.Quotas.Update(existing);
             return await _context.SaveChangesAsync() > 0;
         }
 
@@ -91,7 +111,6 @@ namespace CommunalManagementSystem.DataAccess.Actions
             Year = quotaDAO.year,
             Month = quotaDAO.month,
             Amount = quotaDAO.amount,
-            Status = quotaDAO.status,
             CreatedAt = quotaDAO.created_at
         };
 
@@ -103,7 +122,6 @@ namespace CommunalManagementSystem.DataAccess.Actions
             year = quota.Year,
             month = quota.Month,
             amount = quota.Amount,
-            status = quota.Status,
             created_at = quota.CreatedAt
         };
     }

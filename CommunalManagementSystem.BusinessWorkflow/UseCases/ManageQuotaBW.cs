@@ -33,6 +33,11 @@ namespace CommunalManagementSystem.BusinessWorkflow.UseCases
             return await _manageQuotaDA.GetByPersonAsync(personId);
         }
 
+        public async Task<IEnumerable<Quota>> GetByDateAsync(int year, int month)
+        {
+            return await _manageQuotaDA.GetByDateAsync(year, month);
+        }
+
         public async Task<Quota?> GetByPeriodAsync(Guid personId, int year, int month)
         {
             return await _manageQuotaDA.GetByPeriodAsync(personId, year, month);
@@ -48,13 +53,19 @@ namespace CommunalManagementSystem.BusinessWorkflow.UseCases
             return await _manageQuotaDA.CreateAsync(quota);
         }
 
-        public async Task<bool> UpdateStatusAsync(Guid id, string newStatus)
+        public async Task<bool> UpdateAsync(Guid id, Quota updatedQuota)
         {
             // Validación
-            if (newStatus != "paid" && newStatus != "unpaid")
-                throw new ArgumentException("El estado debe ser 'paid' o 'unpaid'.");
+            var existing = await _manageQuotaDA.GetByIdAsync(id);
+            if (existing == null)
+                throw new KeyNotFoundException("Cuota no encontrada.");
 
-            return await _manageQuotaDA.UpdateStatusAsync(id, newStatus);
+            // Verificar si el periodo ya existe para otra cuota
+            var periodExists = await _manageQuotaDA.GetByPeriodAsync(updatedQuota.PersonId, updatedQuota.Year, updatedQuota.Month);
+            if (periodExists != null && periodExists.Id != id)
+                throw new InvalidOperationException("Ya existe una cuota para esta persona en ese periodo.");
+
+            return await _manageQuotaDA.UpdateAsync(id, updatedQuota);
         }
 
         public async Task<bool> DeleteAsync(Guid id)

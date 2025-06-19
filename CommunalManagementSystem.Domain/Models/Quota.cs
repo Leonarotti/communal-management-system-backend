@@ -13,7 +13,6 @@ namespace CommunalManagementSystem.Domain.Models
         public int Year { get; set; }
         public int Month { get; set; }
         public decimal Amount { get; set; }
-        public string Status { get; set; } = "unpaid";
         public DateTime CreatedAt { get; set; }
     }
 

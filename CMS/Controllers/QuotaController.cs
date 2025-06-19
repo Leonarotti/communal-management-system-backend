@@ -10,7 +10,6 @@ namespace CommunalManagementSystem.API.Controllers
     [ApiController]
     public class QuotaController : ControllerBase
     {
-
         private readonly IManageQuotaBW _manageQuotaBW;
 
         public QuotaController(IManageQuotaBW manageQuotaBW)
@@ -43,8 +42,16 @@ namespace CommunalManagementSystem.API.Controllers
             return Ok(quotaDTOs);
         }
 
+        [HttpGet("date")]
+        public async Task<IActionResult> GetByDate([FromQuery] int year, [FromQuery] int month)
+        {
+            var quotas = await _manageQuotaBW.GetByDateAsync(year, month);
+            var quotaDTOs = QuotaMapper.QuotasToQuotaDTOs(quotas);
+            return Ok(quotaDTOs);
+        }
+
         [HttpGet("period")]
-        public async Task<IActionResult> GetByPeriod([FromQuery] Guid personId, [FromQuery] int year, [FromQuery] int month)
+        public async Task<IActionResult> GetQuotaPersonByPeriod([FromQuery] Guid personId, [FromQuery] int year, [FromQuery] int month)
         {
             var quota = await _manageQuotaBW.GetByPeriodAsync(personId, year, month);
             return quota is not null
@@ -65,10 +72,11 @@ namespace CommunalManagementSystem.API.Controllers
             return CreatedAtAction(nameof(GetById), new { id }, dto);
         }
 
-        [HttpPut("{id:guid}/status")]
-        public async Task<IActionResult> UpdateStatus(Guid id, String status)
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> Update(Guid id, [FromBody] CreateQuotaDTO updateQuotaDTO)
         {
-            var updated = await _manageQuotaBW.UpdateStatusAsync(id, status);
+            var quota = QuotaMapper.CreateQuotaDTOToQuota(updateQuotaDTO);
+            var updated = await _manageQuotaBW.UpdateAsync(id, quota);
             return updated ? NoContent() : NotFound();
         }
 
