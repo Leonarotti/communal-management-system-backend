@@ -22,29 +22,37 @@ namespace CommunalManagementSystem.API.Controllers
         public async Task<IActionResult> GetAll()
         {
             var users = await _manageAuthUserBW.GetAllAsync();
-            return Ok(users);
+            var userDTOs = AuthUserMapper.AuthUsersToAuthUserDTOs(users);
+            return Ok(userDTOs);
         }
 
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetById(Guid id)
         {
             var user = await _manageAuthUserBW.GetByIdAsync(id);
-            return user is not null ? Ok(user) : NotFound();
+            return user is not null
+                ? Ok(AuthUserMapper.AuthUserToAuthUserDTO(user))
+                : NotFound();
         }
 
         [HttpGet("email/{email}")]
         public async Task<IActionResult> GetByEmail(string email)
         {
             var user = await _manageAuthUserBW.GetByEmailAsync(email);
-            return user is not null ? Ok(user) : NotFound();
+            return user is not null
+                ? Ok(AuthUserMapper.AuthUserToAuthUserDTO(user))
+                : NotFound();
         }
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateAuthUserDTO createAuthUserDTO)
         {
-            var authUser = AuthUserMapper.createAuthUserDTOToAuthUser(createAuthUserDTO);
+            var authUser = AuthUserMapper.CreateAuthUserDTOToAuthUser(createAuthUserDTO);
             var id = await _manageAuthUserBW.CreateAsync(authUser);
-            return CreatedAtAction(nameof(GetById), new { id }, authUser);
+            var createdUser = await _manageAuthUserBW.GetByIdAsync(id);
+            if (createdUser is null) return NotFound();
+
+            return CreatedAtAction(nameof(GetById), new { id }, AuthUserMapper.AuthUserToAuthUserDTO(createdUser));
         }
 
         [HttpPut("{id:guid}/password")]
@@ -72,14 +80,17 @@ namespace CommunalManagementSystem.API.Controllers
         public async Task<IActionResult> GetAllWithPersons()
         {
             var users = await _manageAuthUserBW.GetAllWithPersonsAsync();
-            return Ok(users);
+            var dtoList = AuthUserMapper.AuthUsersToAuthUserWithPersonDTOs(users);
+            return Ok(dtoList);
         }
 
         [HttpGet("with-person/email/{email}")]
         public async Task<IActionResult> GetWithPersonByEmail(string email)
         {
             var user = await _manageAuthUserBW.GetWithPersonByEmailAsync(email);
-            return user is not null ? Ok(user) : NotFound();
+            return user is not null
+                ? Ok(AuthUserMapper.AuthUserToAuthUserWithPersonDTO(user))
+                : NotFound();
         }
     }
 }

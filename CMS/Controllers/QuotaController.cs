@@ -22,28 +22,34 @@ namespace CommunalManagementSystem.API.Controllers
         public async Task<IActionResult> GetAll()
         {
             var quotas = await _manageQuotaBW.GetAllAsync();
-            return Ok(quotas);
+            var quotaDTOs = QuotaMapper.QuotasToQuotaDTOs(quotas);
+            return Ok(quotaDTOs);
         }
 
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetById(Guid id)
         {
             var quota = await _manageQuotaBW.GetByIdAsync(id);
-            return quota is not null ? Ok(quota) : NotFound();
+            return quota is not null
+                ? Ok(QuotaMapper.QuotaToQuotaDTO(quota))
+                : NotFound();
         }
 
         [HttpGet("person/{personId:guid}")]
         public async Task<IActionResult> GetByPerson(Guid personId)
         {
             var quotas = await _manageQuotaBW.GetByPersonAsync(personId);
-            return Ok(quotas);
+            var quotaDTOs = QuotaMapper.QuotasToQuotaDTOs(quotas);
+            return Ok(quotaDTOs);
         }
 
         [HttpGet("period")]
         public async Task<IActionResult> GetByPeriod([FromQuery] Guid personId, [FromQuery] int year, [FromQuery] int month)
         {
             var quota = await _manageQuotaBW.GetByPeriodAsync(personId, year, month);
-            return quota is not null ? Ok(quota) : NotFound();
+            return quota is not null
+                ? Ok(QuotaMapper.QuotaToQuotaDTO(quota))
+                : NotFound();
         }
 
         [HttpPost]
@@ -51,7 +57,12 @@ namespace CommunalManagementSystem.API.Controllers
         {
             var quota = QuotaMapper.CreateQuotaDTOToQuota(createQuotaDTO);
             var id = await _manageQuotaBW.CreateAsync(quota);
-            return CreatedAtAction(nameof(GetById), new { id }, quota);
+
+            var createdQuota = await _manageQuotaBW.GetByIdAsync(id);
+            if (createdQuota is null) return NotFound();
+
+            var dto = QuotaMapper.QuotaToQuotaDTO(createdQuota);
+            return CreatedAtAction(nameof(GetById), new { id }, dto);
         }
 
         [HttpPut("{id:guid}/status")]

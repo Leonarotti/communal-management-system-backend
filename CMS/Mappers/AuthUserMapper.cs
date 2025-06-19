@@ -5,14 +5,32 @@ namespace CommunalManagementSystem.API.Mappers
 {
     public class AuthUserMapper
     {
-        public static AuthUser createAuthUserDTOToAuthUser(CreateAuthUserDTO createAuthUserDTO)
+        public static AuthUserDTO AuthUserToAuthUserDTO(AuthUser user)
         {
+            return new AuthUserDTO
+            {
+                _id = user.Id,
+                email = user.Email,
+                role = user.Role,
+                person_id = user.PersonId,
+                created_at = user.CreatedAt
+            };
+        }
+
+        public static IEnumerable<AuthUserDTO> AuthUsersToAuthUserDTOs(IEnumerable<AuthUser> users)
+        {
+            return users.Select(AuthUserToAuthUserDTO);
+        }
+
+        public static AuthUser CreateAuthUserDTOToAuthUser(CreateAuthUserDTO createAuthUserDTO)
+        {
+
             return new AuthUser
             {
-                PersonId = createAuthUserDTO.PersonId,
-                Email = createAuthUserDTO.Email,
-                Password = createAuthUserDTO.Password,
-                Role = createAuthUserDTO.Role
+                PersonId = createAuthUserDTO.person_id,
+                Email = createAuthUserDTO.email,
+                Password = createAuthUserDTO.password,
+                Role = createAuthUserDTO.role
             };
         }
 

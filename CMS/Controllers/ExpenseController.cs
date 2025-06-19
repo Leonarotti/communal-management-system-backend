@@ -20,14 +20,17 @@ namespace CommunalManagementSystem.API.Controllers
         public async Task<IActionResult> GetAll()
         {
             var expenses = await _manageExpenseBW.GetAllAsync();
-            return Ok(expenses);
+            var expenseDTOs = ExpenseMapper.ExpensesToExpenseDTOs(expenses);
+            return Ok(expenseDTOs);
         }
 
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetById(Guid id)
         {
             var expense = await _manageExpenseBW.GetByIdAsync(id);
-            return expense is not null ? Ok(expense) : NotFound();
+            return expense is not null
+                ? Ok(ExpenseMapper.ExpenseToExpenseDTO(expense))
+                : NotFound();
         }
 
         [HttpPost]
@@ -35,7 +38,12 @@ namespace CommunalManagementSystem.API.Controllers
         {
             var expense = ExpenseMapper.CreateExpenseDTOToExpense(createExpenseDTO);
             var id = await _manageExpenseBW.CreateAsync(expense);
-            return CreatedAtAction(nameof(GetById), new { id }, expense);
+
+            var createdExpense = await _manageExpenseBW.GetByIdAsync(id);
+            if (createdExpense is null) return NotFound();
+
+            var dto = ExpenseMapper.ExpenseToExpenseDTO(createdExpense);
+            return CreatedAtAction(nameof(GetById), new { id }, dto);
         }
 
         [HttpPut("{id:guid}")]

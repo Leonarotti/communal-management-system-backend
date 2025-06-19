@@ -22,14 +22,17 @@ namespace CommunalManagementSystem.API.Controllers
         public async Task<IActionResult> GetAll()
         {
             var incomes = await _manageIncomeBW.GetAllAsync();
-            return Ok(incomes);
+            var incomeDTOs = IncomeMapper.IncomesToIncomeDTOs(incomes);
+            return Ok(incomeDTOs);
         }
 
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetById(Guid id)
         {
             var income = await _manageIncomeBW.GetByIdAsync(id);
-            return income is not null ? Ok(income) : NotFound();
+            return income is not null
+                ? Ok(IncomeMapper.IncomeToIncomeDTO(income))
+                : NotFound();
         }
 
         [HttpPost]
@@ -37,7 +40,13 @@ namespace CommunalManagementSystem.API.Controllers
         {
             var income = IncomeMapper.CreateIncomeDTOToIncome(createIncomeDTO);
             var id = await _manageIncomeBW.CreateAsync(income);
-            return CreatedAtAction(nameof(GetById), new { id }, income);
+
+            // Buscarlo para devolver la versión con todos los datos completos
+            var createdIncome = await _manageIncomeBW.GetByIdAsync(id);
+            if (createdIncome is null) return NotFound();
+
+            var dto = IncomeMapper.IncomeToIncomeDTO(createdIncome);
+            return CreatedAtAction(nameof(GetById), new { id }, dto);
         }
 
         [HttpPut("{id:guid}")]

@@ -22,21 +22,26 @@ namespace CommunalManagementSystem.API.Controllers
         public async Task<IActionResult> GetAll()
         {
             var persons = await _managePersonBW.GetAllAsync();
-            return Ok(persons);
+            var personDTOs = PersonMapper.PersonsToPersonDTOs(persons);
+            return Ok(personDTOs);
         }
 
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetById(Guid id)
         {
             var person = await _managePersonBW.GetByIdAsync(id);
-            return person is not null ? Ok(person) : NotFound();
+            return person is not null
+                ? Ok(PersonMapper.PersonToPersonDTO(person))
+                : NotFound();
         }
 
         [HttpGet("dni/{dni}")]
         public async Task<IActionResult> GetByDni(string dni)
         {
             var person = await _managePersonBW.GetByDniAsync(dni);
-            return person is not null ? Ok(person) : NotFound();
+            return person is not null
+                ? Ok(PersonMapper.PersonToPersonDTO(person))
+                : NotFound();
         }
 
         [HttpPost]
@@ -44,7 +49,13 @@ namespace CommunalManagementSystem.API.Controllers
         {
             var person = PersonMapper.CreatePersonDTOToPerson(createPersonDTO);
             var id = await _managePersonBW.CreateAsync(person);
-            return CreatedAtAction(nameof(GetById), new { id }, person);
+
+            // Retornar solo el DTO generado
+            var createdPerson = await _managePersonBW.GetByIdAsync(id);
+            if (createdPerson == null) return NotFound();
+
+            var dto = PersonMapper.PersonToPersonDTO(createdPerson);
+            return CreatedAtAction(nameof(GetById), new { id }, dto);
         }
 
         [HttpPut("{id:guid}")]
