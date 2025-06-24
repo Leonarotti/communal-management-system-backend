@@ -103,5 +103,10 @@ namespace CommunalManagementSystem.DataAccess.Actions
             _context.Persons.Update(person);
             return await _context.SaveChangesAsync() > 0;
         }
+
+        public async Task<int> GetTotalPersonsAsync()
+        {
+            return await _context.Persons.CountAsync();
+        }
     }
 }

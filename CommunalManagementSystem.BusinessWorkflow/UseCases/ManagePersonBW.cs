@@ -76,5 +76,10 @@ namespace CommunalManagementSystem.BusinessWorkflow.UseCases
 
             return await _managePersonDA.UpdateAsync(id, updatedPerson);
         }
+
+        public async Task<int> GetTotalPersonsAsync()
+        {
+            return await _managePersonDA.GetTotalPersonsAsync();
+        }
     }
 }

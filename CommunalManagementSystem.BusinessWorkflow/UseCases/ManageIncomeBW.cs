@@ -69,5 +69,11 @@ namespace CommunalManagementSystem.BusinessWorkflow.UseCases
 
             return await _manageIncomeDA.UpdateAsync(id, updatedIncome);
         }
+
+        public async Task<decimal> GetTotalIncomesAsync()
+        {
+            return await _manageIncomeDA.GetTotalIncomesAsync();
+        }
+
     }
 }

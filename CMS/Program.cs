@@ -27,6 +27,7 @@ builder.Services.AddTransient<IManagePersonBW, ManagePersonBW>();
 builder.Services.AddTransient<IManageIncomeBW, ManageIncomeBW>();
 builder.Services.AddTransient<IManageExpenseBW, ManageExpenseBW>();
 builder.Services.AddTransient<IManageQuotaBW, ManageQuotaBW>();
+builder.Services.AddScoped<IDashboardBW, DashboardBW>();
 
 
 builder.Services.AddDbContext<CommunalManagementSystemDbContext>(options =>

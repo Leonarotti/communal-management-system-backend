@@ -9,5 +9,6 @@ namespace CommunalManagementSystem.BusinessWorkflow.Interfaces.DA
         Task<Guid> CreateAsync(Expense expense);
         Task<bool> UpdateAsync(Guid id, Expense updatedExpense);
         Task<bool> DeleteAsync(Guid id);
+        Task<decimal> GetTotalExpensesAsync();
     }
 }

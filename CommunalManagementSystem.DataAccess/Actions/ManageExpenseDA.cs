@@ -80,5 +80,10 @@ namespace CommunalManagementSystem.DataAccess.Actions
             _context.Expenses.Remove(expenseDAO);
             return await _context.SaveChangesAsync() > 0;
         }
+
+        public async Task<decimal> GetTotalExpensesAsync()
+        {
+            return await _context.Expenses.SumAsync(e => e.amount);
+        }
     }
 }

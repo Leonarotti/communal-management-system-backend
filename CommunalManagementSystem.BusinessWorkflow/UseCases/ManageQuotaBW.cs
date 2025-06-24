@@ -72,5 +72,15 @@ namespace CommunalManagementSystem.BusinessWorkflow.UseCases
         {
             return await _manageQuotaDA.DeleteAsync(id);
         }
+
+        public async Task<decimal> GetTotalQuotasPaidAsync()
+        {
+            return await _manageQuotaDA.GetTotalQuotasPaidAsync();
+        }
+
+        public async Task<decimal> GetTotalQuotasPaidForMonthAsync(int year, int month)
+        {
+            return await _manageQuotaDA.GetTotalQuotasPaidForMonthAsync(year, month);
+        }
     }
 }

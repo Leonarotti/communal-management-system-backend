@@ -15,5 +15,6 @@ namespace CommunalManagementSystem.BusinessWorkflow.Interfaces.DA
         Task<Guid> CreateAsync(Person person);
         Task<bool> UpdateAsync(Guid id, Person updatedPerson);
         Task<bool> DeleteAsync(Guid id);
+        Task<int> GetTotalPersonsAsync();
     }
 }

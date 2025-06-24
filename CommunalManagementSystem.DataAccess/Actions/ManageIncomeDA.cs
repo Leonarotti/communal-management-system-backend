@@ -85,5 +85,10 @@ namespace CommunalManagementSystem.DataAccess.Actions
             _context.Incomes.Remove(incomeDAO);
             return await _context.SaveChangesAsync() > 0;
         }
+
+        public async Task<decimal> GetTotalIncomesAsync()
+        {
+            return await _context.Incomes.SumAsync(i => i.amount);
+        }
     }
 }

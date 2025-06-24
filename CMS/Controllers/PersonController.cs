@@ -72,5 +72,12 @@ namespace CommunalManagementSystem.API.Controllers
             var deleted = await _managePersonBW.DeleteAsync(id);
             return deleted ? NoContent() : NotFound();
         }
+
+        [HttpGet("total")]
+        public async Task<IActionResult> GetTotalPersons()
+        {
+            var total = await _managePersonBW.GetTotalPersonsAsync();
+            return Ok(total);
+        }
     }
 }

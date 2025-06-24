@@ -86,5 +86,19 @@ namespace CommunalManagementSystem.API.Controllers
             var deleted = await _manageQuotaBW.DeleteAsync(id);
             return deleted ? NoContent() : NotFound();
         }
+
+        [HttpGet("total-paid")]
+        public async Task<IActionResult> GetTotalQuotasPaid()
+        {
+            var total = await _manageQuotaBW.GetTotalQuotasPaidAsync();
+            return Ok(new { Total = total });
+        }
+
+        [HttpGet("total-paid/month")]
+        public async Task<IActionResult> GetTotalQuotasPaidForMonth([FromQuery] int year, [FromQuery] int month)
+        {
+            var total = await _manageQuotaBW.GetTotalQuotasPaidForMonthAsync(year, month);
+            return Ok(new { Total = total });
+        }
     }
 }

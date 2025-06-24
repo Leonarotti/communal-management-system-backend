@@ -103,6 +103,18 @@ namespace CommunalManagementSystem.DataAccess.Actions
             return await _context.SaveChangesAsync() > 0;
         }
 
+        public async Task<decimal> GetTotalQuotasPaidAsync()
+        {
+            return await _context.Quotas.SumAsync(q => q.amount);
+        }
+
+        public async Task<decimal> GetTotalQuotasPaidForMonthAsync(int year, int month)
+        {
+            return await _context.Quotas
+                .Where(q => q.year == year && q.month == month)
+                .SumAsync(q => q.amount);
+        }
+
         // Map from DAO to Domain
         private Quota QuotaDAOToQuota(QuotaDAO quotaDAO) => new Quota
         {
