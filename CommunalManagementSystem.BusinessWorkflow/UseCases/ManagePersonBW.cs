@@ -7,10 +7,12 @@ namespace CommunalManagementSystem.BusinessWorkflow.UseCases
     public class ManagePersonBW : IManagePersonBW
     {
         private readonly IManagePersonDA _managePersonDA;
+        private readonly IManageQuotaBW _manageQuotaBW;
 
-        public ManagePersonBW(IManagePersonDA managePersonDA)
+        public ManagePersonBW(IManagePersonDA managePersonDA, IManageQuotaBW manageQuotaBW)
         {
             _managePersonDA = managePersonDA;
+            _manageQuotaBW = manageQuotaBW;
         }
 
         public async Task<Guid> CreateAsync(Person person)
@@ -33,6 +35,9 @@ namespace CommunalManagementSystem.BusinessWorkflow.UseCases
 
         public async Task<bool> DeleteAsync(Guid id)
         {
+            var quotaList = await _manageQuotaBW.GetByPersonAsync(id);
+            if (quotaList.Any())
+                throw new InvalidOperationException("No se puede eliminar una persona que tiene cuotas asociadas.");
             var existingPerson = await _managePersonDA.GetByIdAsync(id);
             if (existingPerson == null)
                 throw new InvalidOperationException("No se encontró la persona para eliminar.");

@@ -1,8 +1,6 @@
 ﻿using CommunalManagementSystem.API.DTOs;
 using CommunalManagementSystem.API.Mappers;
 using CommunalManagementSystem.BusinessWorkflow.Interfaces.BW;
-using CommunalManagementSystem.Domain.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CommunalManagementSystem.API.Controllers
@@ -69,8 +67,19 @@ namespace CommunalManagementSystem.API.Controllers
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var deleted = await _managePersonBW.DeleteAsync(id);
-            return deleted ? NoContent() : NotFound();
+            try
+            {
+                var deleted = await _managePersonBW.DeleteAsync(id);
+                return deleted ? NoContent() : NotFound();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error eliminando la persona.", detail = ex.Message });
+            }
         }
 
         [HttpGet("total")]
