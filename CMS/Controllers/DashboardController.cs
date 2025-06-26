@@ -27,5 +27,17 @@ namespace CommunalManagementSystem.API.Controllers
             var dashboardDTOMetrics = DashboardMapper.DashboardToDashboardDTO(dashboardMetrics);
             return Ok(dashboardDTOMetrics);
         }
+
+        [HttpGet("quarter-summary")]
+        public async Task<IActionResult> GetQuarterSummary()
+        {
+            var quarterSummary = await _dashboardBW.GetQuarterSummary();
+            if (quarterSummary == null)
+            {
+                return NotFound("Quarter summary not found.");
+            }
+            var quarterSummaryDTO = DashboardMapper.DashboardToDashboardDTO(quarterSummary);
+            return Ok(quarterSummaryDTO);
+        }
     }
 }

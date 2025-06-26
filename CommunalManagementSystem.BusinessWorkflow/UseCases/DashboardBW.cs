@@ -39,9 +39,25 @@ namespace CommunalManagementSystem.BusinessWorkflow.UseCases
                 TotalPersons = totalPersons,
                 TotalIncome = totalIncome,
                 TotalExpenses = totalExpenses,
-                CurrentBalance = totalIncome - totalExpenses,
+                CurrentBalance = (totalIncome + totalQuotasPaid) - totalExpenses,
                 TotalQuotasPaid = totalQuotasPaid
             };
+        }
+
+        public async Task<Dashboard> GetQuarterSummary()
+        {
+            var totalIncomes = await _manageIncomeBW.GetTotalForLast3MonthsAsync();
+            var totalExpenses = await _manageExpenseBW.GetTotalForLast3MonthsAsync();
+            var totalQuotas = await _manageQuotaBW.GetTotalPaidForLast3MonthsAsync();
+
+            return new Dashboard
+            {
+                TotalIncome = totalIncomes,
+                TotalExpenses = totalExpenses,
+                CurrentBalance = (totalIncomes + totalQuotas) - totalExpenses,
+                TotalQuotasPaid = totalQuotas
+            };
+
         }
     }
 }

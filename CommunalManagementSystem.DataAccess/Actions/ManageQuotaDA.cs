@@ -115,6 +115,15 @@ namespace CommunalManagementSystem.DataAccess.Actions
                 .SumAsync(q => q.amount);
         }
 
+        public async Task<decimal> GetTotalPaidForLast3MonthsAsync()
+        {
+            var fromDate = DateTime.UtcNow.AddMonths(-3);
+            return await _context.Quotas
+                .Where(q => q.created_at >= fromDate)
+                .SumAsync(q => q.amount);
+        }
+
+
         // Map from DAO to Domain
         private Quota QuotaDAOToQuota(QuotaDAO quotaDAO) => new Quota
         {

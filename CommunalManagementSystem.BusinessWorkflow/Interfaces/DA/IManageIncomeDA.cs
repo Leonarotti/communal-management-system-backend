@@ -15,5 +15,6 @@ namespace CommunalManagementSystem.BusinessWorkflow.Interfaces.DA
         Task<bool> UpdateAsync(Guid id, Income updatedIncome);
         Task<bool> DeleteAsync(Guid id);
         Task<decimal> GetTotalIncomesAsync();
+        Task<decimal> GetTotalForLast3MonthsAsync();
     }
 }

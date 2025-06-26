@@ -85,5 +85,14 @@ namespace CommunalManagementSystem.DataAccess.Actions
         {
             return await _context.Expenses.SumAsync(e => e.amount);
         }
+
+        public async Task<decimal> GetTotalForLast3MonthsAsync()
+        {
+            var fromDate = DateTime.UtcNow.AddMonths(-3);
+            return await _context.Expenses
+                .Where(e => e.date >= fromDate)
+                .SumAsync(e => e.amount);
+        }
+
     }
 }

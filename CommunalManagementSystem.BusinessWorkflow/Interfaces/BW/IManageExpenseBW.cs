@@ -15,5 +15,6 @@ namespace CommunalManagementSystem.BusinessWorkflow.Interfaces.BW
         Task<bool> UpdateAsync(Guid id, Expense updatedExpense);
         Task<bool> DeleteAsync(Guid id);
         Task<decimal> GetTotalExpensesAsync();
+        Task<decimal> GetTotalForLast3MonthsAsync();
     }
 }

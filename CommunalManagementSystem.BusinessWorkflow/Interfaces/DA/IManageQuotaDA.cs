@@ -19,5 +19,6 @@ namespace CommunalManagementSystem.BusinessWorkflow.Interfaces.DA
         Task<bool> DeleteAsync(Guid id);
         Task<decimal> GetTotalQuotasPaidAsync();
         Task<decimal> GetTotalQuotasPaidForMonthAsync(int year, int month);
+        Task<decimal> GetTotalPaidForLast3MonthsAsync();
     }
 }
