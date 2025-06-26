@@ -119,10 +119,9 @@ namespace CommunalManagementSystem.DataAccess.Actions
         {
             var fromDate = DateTime.UtcNow.AddMonths(-3);
             return await _context.Quotas
-                .Where(q => q.created_at >= fromDate)
+                .Where(q => q.month >= fromDate.Month && q.year >= fromDate.Year)
                 .SumAsync(q => q.amount);
         }
-
 
         // Map from DAO to Domain
         private Quota QuotaDAOToQuota(QuotaDAO quotaDAO) => new Quota
