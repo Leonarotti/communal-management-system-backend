@@ -20,7 +20,7 @@ namespace CommunalManagementSystem.DataAccess.Actions
             var authUserDAO = new AuthUserDAO
             {
                 id = authUser.Id != Guid.Empty ? authUser.Id : Guid.NewGuid(),
-                person_id = authUser.PersonId,
+                person_id = authUser.Id,
                 email = authUser.Email,
                 password = authUser.Password,
                 role = authUser.Role,
@@ -69,7 +69,7 @@ namespace CommunalManagementSystem.DataAccess.Actions
             existing.email = updatedUser.Email;
             existing.password = updatedUser.Password;
             existing.role = updatedUser.Role;
-            existing.person_id = updatedUser.PersonId;
+            existing.person_id = updatedUser.Id;
 
             _context.AuthUsers.Update(existing);
             return await _context.SaveChangesAsync() > 0;

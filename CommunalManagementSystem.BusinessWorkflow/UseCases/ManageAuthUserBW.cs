@@ -68,7 +68,7 @@ namespace CommunalManagementSystem.BusinessWorkflow.UseCases
 
             foreach (var user in authUsers)
             {
-                if (!personDict.TryGetValue(user.PersonId, out var person))
+                if (!personDict.TryGetValue(user.Id, out var person))
                     continue; // O decide lanzar excepción o retornar nulo
 
                 result.Add(new AuthUserWithPerson
@@ -93,7 +93,7 @@ namespace CommunalManagementSystem.BusinessWorkflow.UseCases
             var user = await _manageAuthUserDA.GetByEmailAsync(email);
             if (user == null) return null;
 
-            var person = await _managePersonBW.GetByIdAsync(user.PersonId);
+            var person = await _managePersonBW.GetByIdAsync(user.Id);
             if (person == null) return null;
 
             return new AuthUserWithPerson
