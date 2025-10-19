@@ -1,4 +1,4 @@
-using CommunalManagementSystem.BusinessWorkflow.Interfaces.BW;
+﻿using CommunalManagementSystem.BusinessWorkflow.Interfaces.BW;
 using CommunalManagementSystem.BusinessWorkflow.Interfaces.DA;
 using CommunalManagementSystem.BusinessWorkflow.UseCases;
 using CommunalManagementSystem.DataAccess.Actions;
@@ -6,7 +6,18 @@ using CommunalManagementSystem.DataAccess.Context;
 using Microsoft.EntityFrameworkCore;
 using System;
 
+
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+
+using QuestPDF.Infrastructure; // 👈 agrega este using
+
 var builder = WebApplication.CreateBuilder(args);
+
+// 👇 agrega esta línea ANTES de usar QuestPDF
+QuestPDF.Settings.License = LicenseType.Community;
+
 
 // Add services to the container.
 
@@ -14,6 +25,30 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+
+//// Nuevo
+// ✅ Configurar JWT
+var jwtKey = builder.Configuration["Jwt:Key"];
+var jwtIssuer = builder.Configuration["Jwt:Issuer"];
+var jwtAudience = builder.Configuration["Jwt:Audience"];
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtIssuer,
+            ValidAudience = jwtAudience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey!))
+        };
+    });
+
+///
 
 // Dependency injection
 builder.Services.AddTransient<IManageAuthUserDA, ManageAuthUserDA>();
@@ -51,6 +86,8 @@ app.UseCors(builder =>
 });
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication(); // ✅ debe ir antes de Authorization
 
 app.UseAuthorization();
 
